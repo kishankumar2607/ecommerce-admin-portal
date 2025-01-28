@@ -1,0 +1,370 @@
+/* Global Styles */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000000;
+  padding: 1.5rem 5rem;
+  color: white;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.navbar-brand h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  margin: 0;
+}
+
+.navbar-menu li {
+  margin-left: 20px;
+}
+
+.navbar-menu a {
+  position: relative;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 5px 10px;
+  transition: all 0.3s ease-in;
+}
+
+.navbar-menu a:hover {
+  color: #ffee00;
+}
+
+.navbar-menu a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 3px;
+  width: 0;
+  background-color: #ffee00;
+  transition: width 0.3s ease-in-out;
+}
+
+.navbar-menu a:hover::after {
+  width: 100%;
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+  min-height: 90vh;
+  margin-top: 4rem;
+  padding: 4rem 5rem;
+}
+
+.dashboard-title {
+  font-size: 42px;
+  font-weight: 900;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Search Bar Styles */
+.search-container {
+  margin: 2rem 0rem 2.5rem;
+}
+
+.search-form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.search-input {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  max-width: 250px;
+  border-radius: 8px;
+  margin-right: 1.5rem;
+  border: 2px solid #000000 !important;
+  transition: border 0.3s;
+}
+
+input,
+textarea {
+  font-family: "Roboto", sans-serif;
+  padding: 10px;
+  font-size: 16px;
+  font-size: 700;
+  color: #000000;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #ffee00 !important;
+  outline: none;
+}
+
+.btn {
+  padding: 12px 20px;
+  background-color: #000000;
+  width: auto;
+  color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+
+.btn:hover {
+  background-color: transparent;
+  color: #000000;
+}
+
+#clear-btn {
+  margin-left: 1.5rem;
+  padding: 8px 16px !important;
+}
+
+/* Grid Styles */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+/* Computer Card Styles */
+.computer-card {
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.computer-card:hover {
+  transform: scale(1.05);
+}
+
+.computer-card-header {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 15px;
+  text-align: center;
+}
+
+.computer-card-body {
+  font-size: 18px;
+  line-height: 1.8;
+  padding: 15px;
+  color: #000000;
+}
+
+.computer-card-footer {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 15px;
+  background-color: #f1f1f1;
+}
+
+.edit-btn {
+  padding: 6px 20px;
+  background-color: #000000;
+  width: auto;
+  color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+
+.edit-btn:hover {
+  background-color: transparent;
+  color: #000000;
+}
+
+.delete-btn {
+  padding: 6px 20px;
+  background-color: #ff0000;
+  width: auto;
+  color: #ffffff;
+  border: 2px solid #ff0000;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+
+.delete-btn:hover {
+  background-color: transparent;
+  color: #ff0000;
+}
+
+.no-data-found {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.no-data-found p {
+  margin-bottom: 1rem;
+  padding: 0rem 20rem;
+}
+
+/* Container */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4rem 2rem;
+  padding: 2rem 5rem;
+}
+
+.form-container {
+  background-color: #fff;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 600px;
+  padding: 40px;
+  margin-top: 4rem;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #000000;
+}
+
+/* Message */
+.message {
+  text-align: center;
+  font-size: 16px;
+  color: green;
+  margin-bottom: 20px;
+}
+
+/* Form Group */
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+textarea {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  width: 100%;
+  border-radius: 5px;
+  border: 2px solid #000000;
+}
+
+.form-group textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 1.2rem;
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+
+.submit-btn:hover {
+  background-color: transparent;
+  color: #000000;
+}
+
+.back-home{
+    width: 100%;
+    padding: 12px 0px;
+    margin-bottom: 1.5rem !important;
+}
+
+.back-home a {
+  padding: 12px 20px;
+  background-color: #000000;
+  width: auto;
+  color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+
+.back-home a:hover {
+  background-color: transparent;
+  color: #000000;
+}
+
+/* Footer Styles */
+footer {
+  font-weight: 500;
+  text-align: center;
+  padding: 1rem 0rem;
+  background-color: #333;
+  color: #ffffff;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .no-data-found p {
+    padding: 0rem;
+  }
+}
