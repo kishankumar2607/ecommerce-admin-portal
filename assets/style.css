@@ -129,6 +129,14 @@ textarea:focus {
   outline: none;
 }
 
+.error {
+  color: red;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 5px;
+  display: block;
+}
+
 .btn {
   padding: 12px 20px;
   background-color: #000000;
