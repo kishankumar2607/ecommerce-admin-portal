@@ -1,36 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<?php
-require_once "../includes/dbinit.php";
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Computer Inventory</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <a href="index.php">
+                    <h1>Computer Inventory</h1>
+                </a>
+            </div>
+            <ul class="navbar-menu">
+                <li><a href="index.php">Home</a></li>
+                <li><a href="insert.php">Add New</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    // Handle form submissions
-    $message = "";
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['insert'])) {
-            $stmt = $pdo->prepare("INSERT INTO computers (ComputerName, Description, Quantity, Price) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$_POST['name'], $_POST['description'], $_POST['quantity'], $_POST['price']]);
-            $message = "Computer added successfully!";
-        }
+    <main class="dashboard-container">
+        <h2 class="dashboard-title">Welcome to the Computer Inventory Dashboard</h2>
 
-        if (isset($_POST['update'])) {
-            $stmt = $pdo->prepare("UPDATE computers SET ComputerName = ?, Description = ?, Quantity = ?, Price = ? WHERE ComputerID = ?");
-            $stmt->execute([$_POST['name'], $_POST['description'], $_POST['quantity'], $_POST['price'], $_POST['id']]);
-            $message = "Computer updated successfully!";
-        }
+        <div class="search-container">
+            <form method="get" action="index.php" class="search-form">
+                <input type="text" name="search" placeholder="Search..." class="search-input">
+                <button type="submit" class="btn">Search</button>
+            </form>
+        </div>
 
-        if (isset($_POST['delete'])) {
-            $stmt = $pdo->prepare("DELETE FROM computers WHERE ComputerID = ?");
-            $stmt->execute([$_POST['id']]);
-            $message = "Computer deleted successfully!";
-        }
-    }
 
-    $stmt = $pdo->query("SELECT * FROM computers");
-    $computers = $stmt->fetchAll();
-} catch (PDOException $e) {
-    die("Error: " . $e->getMessage());
-}
-?>
+        <div class="grid-container">
+            <div class="computer-card">
+                <div class="computer-card-header">
+                    <h3 class="computer-name">Name</h3>
+                </div>
+                <div class="computer-card-body">
+                    <p><strong>Description:</strong></p>
+                    <p><strong>Quantity:</strong></p>
+                    <p><strong>Price:</strong></p>
+                </div>
+                <div class="computer-card-footer">
+                    <a href="" class="edit-btn">Edit</a>
+                    <a href="" class="delete-btn">Delete</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Computer Inventory Management</p>
+    </footer>
+</body>
+
+</html>
