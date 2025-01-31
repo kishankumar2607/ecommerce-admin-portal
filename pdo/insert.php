@@ -1,5 +1,5 @@
 <?php
-require_once "../includes/dbinit.php";
+require_once "../includes/pdodbinit.php";
 
 $message = "";
 $errors = [];
@@ -44,19 +44,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['added_by'] = "Only letters and white space allowed";
     }
 
-
     if (empty($errors)) {
-        $query = $conn->prepare("INSERT INTO computers (ComputerName, Description, Quantity, Price, ProductAddedBy) VALUES (?, ?, ?, ?, ?)");
-        $query->bind_param("ssids", $name, $description, $quantity, $price, $added_by);
+        try {
+            $query = "INSERT INTO computers (ComputerName, Description, Quantity, Price, ProductAddedBy) VALUES (:name, :description, :quantity, :price, :added_by)";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':description', $description);
+            $stmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
+            $stmt->bindParam(':price', $price, PDO::PARAM_STR);
+            $stmt->bindParam(':added_by', $added_by);
 
-        if ($query->execute()) {
-            $message = "Computer added successfully!";
-            // Reset values after successful submission
-            $name = $description = $quantity = $price = $added_by = "";
+            if ($stmt->execute()) {
+                $message = "Computer added successfully!";
+                $name = $description = $quantity = $price = $added_by = "";
 
-            header("Location: index.php");
-        } else {
-            $message = "Error adding computer.";
+                header("Location: index.php");
+                exit;
+            } else {
+                $message = "Error adding computer.";
+            }
+        } catch (PDOException $e) {
+            $message = "Database error: " . $e->getMessage();
         }
     }
 }
@@ -95,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="success"><?= htmlspecialchars($message) ?></p>
             <?php endif; ?>
 
-            <form method="POST"  action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="add-computer-form">
+            <form method="POST" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" class="add-computer-form">
                 <div class="form-group">
                     <label for="name">Computer Name:</label>
                     <input type="text" name="name" id="name" value="<?= htmlspecialchars($name) ?>">

@@ -1,11 +1,34 @@
 <?php
-require_once "../includes/dbinit.php";
+require_once "../includes/pdodbinit.php";
 
 $message = "";
 $errors = [];
 
 $name = $description = $quantity = $price = $added_by = "";
+$id = "";
 
+// Fetch the current data to pre-fill the form if it's a GET request
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
+    $id = $_GET['id'];
+
+    // Fetch the current data from the database
+    $fetchQuery = $pdo->prepare("SELECT * FROM computers WHERE ComputerID = :id");
+    $fetchQuery->bindParam(':id', $id, PDO::PARAM_INT);
+    $fetchQuery->execute();
+    $computer = $fetchQuery->fetch(PDO::FETCH_ASSOC);
+
+    if ($computer) {
+        $name = $computer['ComputerName'];
+        $description = $computer['Description'];
+        $quantity = $computer['Quantity'];
+        $price = $computer['Price'];
+        $added_by = $computer['ProductAddedBy'];
+    } else {
+        die("Computer not found.");
+    }
+}
+
+// Handle POST request (form submission)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = trim($_POST['name']);
@@ -13,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantity = trim($_POST['quantity']);
     $price = trim($_POST['price']);
     $added_by = trim($_POST['added_by']);
+    $id = $_POST['id'];
 
     if (empty($name)) {
         $errors['name'] = "Computer name is required";
@@ -44,20 +68,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['added_by'] = "Only letters and white space allowed";
     }
 
-
     if (empty($errors)) {
-        $query = $conn->prepare("INSERT INTO computers (ComputerName, Description, Quantity, Price, ProductAddedBy) VALUES (?, ?, ?, ?, ?)");
-        $query->bind_param("ssids", $name, $description, $quantity, $price, $added_by);
+        $updateQuery = $pdo->prepare("UPDATE computers SET ComputerName = :name, Description = :description, Quantity = :quantity, Price = :price, ProductAddedBy = :added_by WHERE ComputerID = :id");
+        $updateQuery->bindParam(':name', $name, PDO::PARAM_STR);
+        $updateQuery->bindParam(':description', $description, PDO::PARAM_STR);
+        $updateQuery->bindParam(':quantity', $quantity, PDO::PARAM_INT);
+        $updateQuery->bindParam(':price', $price, PDO::PARAM_STR);
+        $updateQuery->bindParam(':added_by', $added_by, PDO::PARAM_STR);
+        $updateQuery->bindParam(':id', $id, PDO::PARAM_INT);
 
-        if ($query->execute()) {
-            $message = "Computer added successfully!";
-            // Reset values after successful submission
-            $name = $description = $quantity = $price = $added_by = "";
+        $updateQuery->execute();
 
-            header("Location: index.php");
-        } else {
-            $message = "Error adding computer.";
-        }
+        $message = "Data updated successfully!";
+        header("Location: index.php");
+        exit();
     }
 }
 ?>
@@ -68,72 +92,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Computer</title>
+    <title>Edit Computer</title>
     <link rel="stylesheet" href="../assets/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="navbar-brand">
-                <a href="index.php">
-                    <h1>Computer Inventory</h1>
-                </a>
-            </div>
-            <ul class="navbar-menu">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="insert.php">Add New</a></li>
-            </ul>
-        </nav>
-    </header>
-    <div class="container">
+    <main class="container">
         <div class="form-container">
-            <h1 class="page-title">Add a New Computer</h1>
+            <h1 class="page-title">Edit Computer</h1>
 
             <?php if ($message): ?>
-                <p class="success"><?= htmlspecialchars($message) ?></p>
+                <div class="error"><?= htmlspecialchars($message) ?></div>
             <?php endif; ?>
 
-            <form method="POST"  action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="add-computer-form">
+            <div class="back-home">
+                <a href="index.php">Back to Home</a>
+            </div>
+
+            <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="edit-computer-form">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($id) ?>">
+
                 <div class="form-group">
                     <label for="name">Computer Name:</label>
-                    <input type="text" name="name" id="name" value="<?= htmlspecialchars($name) ?>">
+                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($name) ?>">
                     <span class="error"><?= $errors['name'] ?? '' ?></span>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea name="description" id="description"><?= htmlspecialchars($description) ?></textarea>
+                    <textarea id="description" name="description"><?= htmlspecialchars($description) ?></textarea>
                     <span class="error"><?= $errors['description'] ?? '' ?></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="quantity">Quantity:</label>
-                    <input type="text" name="quantity" id="quantity" value="<?= htmlspecialchars($quantity) ?>">
+                    <label for="quantity">Quantity Available:</label>
+                    <input type="text" id="quantity" name="quantity" value="<?= htmlspecialchars($quantity) ?>">
                     <span class="error"><?= $errors['quantity'] ?? '' ?></span>
                 </div>
 
                 <div class="form-group">
                     <label for="price">Price:</label>
-                    <input type="text" name="price" step="0.01" id="price" value="<?= htmlspecialchars($price) ?>">
+                    <input type="text" id="price" name="price" step="0.01" value="<?= htmlspecialchars($price) ?>">
                     <span class="error"><?= $errors['price'] ?? '' ?></span>
                 </div>
 
                 <div class="form-group">
                     <label for="added_by">Product Added By:</label>
-                    <input type="text" name="added_by" id="added_by" value="<?= htmlspecialchars($added_by) ?>">
+                    <input type="text" id="added_by" name="added_by" value="<?= htmlspecialchars($added_by) ?>">
                     <span class="error"><?= $errors['added_by'] ?? '' ?></span>
                 </div>
 
-                <button type="submit" class="submit-btn">Add Computer</button>
+                <button type="submit" class="submit-btn">Update</button>
             </form>
         </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2025 Computer Inventory Management</p>
-    </footer>
+    </main>
 </body>
 
 </html>

@@ -1,3 +1,27 @@
+<?php
+
+require_once '../includes/pdodbinit.php';
+
+// Fetch all computer records from the database
+$query = "SELECT * FROM computers";
+$result = $pdo->query($query);
+$computers = $result->fetchAll(PDO::FETCH_ASSOC);
+
+// Search functionality if search term is present
+$searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+if ($searchQuery) {
+    $query = "SELECT * FROM computers WHERE ComputerName LIKE :search OR Description LIKE :search";
+    $result = $pdo->prepare($query);
+    $searchTerm = "%$searchQuery%";
+    $result->bindParam(':search', $searchTerm, PDO::PARAM_STR);
+    $result->execute();
+    $computers = $result->fetchAll(PDO::FETCH_ASSOC);
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,28 +53,40 @@
 
         <div class="search-container">
             <form method="get" action="index.php" class="search-form">
-                <input type="text" name="search" placeholder="Search..." class="search-input">
+                <input type="text" name="search" placeholder="Search..." class="search-input" value="<?= htmlspecialchars($searchQuery) ?>">
                 <button type="submit" class="btn">Search</button>
+                <?php if ($searchQuery): ?>
+                    <a href="index.php" class="delete-btn" id="clear-btn">Clear Search</a>
+                <?php endif; ?>
             </form>
         </div>
 
-
-        <div class="grid-container">
-            <div class="computer-card">
-                <div class="computer-card-header">
-                    <h3 class="computer-name">Name</h3>
-                </div>
-                <div class="computer-card-body">
-                    <p><strong>Description:</strong></p>
-                    <p><strong>Quantity:</strong></p>
-                    <p><strong>Price:</strong></p>
-                </div>
-                <div class="computer-card-footer">
-                    <a href="" class="edit-btn">Edit</a>
-                    <a href="" class="delete-btn">Delete</a>
-                </div>
+        <?php if (empty($computers)): ?>
+            <div class="no-data-found">
+                <h3>No data found</h3>
+                <p>There are no computers in the inventory. You can add new computers using the button below.</p>
+                <a href="insert.php" class="btn">Add Data</a>
             </div>
-        </div>
+        <?php else: ?>
+            <div class="grid-container">
+                <?php foreach ($computers as $computer): ?>
+                    <div class="computer-card">
+                        <div class="computer-card-header">
+                            <h3 class="computer-name"><?= htmlspecialchars($computer['ComputerName']) ?></h3>
+                        </div>
+                        <div class="computer-card-body">
+                            <p><strong>Description:</strong> <?= htmlspecialchars($computer['Description']) ?></p>
+                            <p><strong>Quantity:</strong> <?= htmlspecialchars($computer['Quantity']) ?></p>
+                            <p><strong>Price:</strong> $<?= number_format($computer['Price'], 2) ?></p>
+                        </div>
+                        <div class="computer-card-footer">
+                            <a href="update.php?id=<?= $computer['ComputerID'] ?>" class="edit-btn">Edit</a>
+                            <a href="delete.php?id=<?= $computer['ComputerID'] ?>" class="delete-btn">Delete</a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </main>
 
     <footer>

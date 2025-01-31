@@ -11,5 +11,5 @@ CREATE TABLE computers (
     Description TEXT NOT NULL,
     Quantity INT NOT NULL,
     Price DECIMAL(10, 2) NOT NULL,
-    ProductAddedBy VARCHAR(255) DEFAULT 'KishanKumarDas' NOT NULL
+    ProductAddedBy VARCHAR(255) DEFAULT 'Kishan Kumar Das' NOT NULL
 );
